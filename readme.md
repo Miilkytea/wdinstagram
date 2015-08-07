@@ -76,3 +76,4 @@ We structured our entries after this image, found online:
    `date_taken` should be today by default.
 1. Add a `caption` to your entries.
 hi
+whatever
