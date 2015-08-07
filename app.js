@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var http = require('http');
 var mongoose = require('mongoose');
 var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
@@ -9,7 +10,7 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 var port = process.env.PORT || 3000;
 
-mongoose.connect('mongodb://localhost/wdinstagram');
+// mongoose.connect('mongodb://localhost/wdinstagram');
 
 var routes = require('./routes/index');
 
