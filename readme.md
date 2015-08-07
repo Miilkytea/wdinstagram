@@ -75,3 +75,4 @@ We structured our entries after this image, found online:
 1. Add validation: `author` and `photo_url` need to be present, and the 
    `date_taken` should be today by default.
 1. Add a `caption` to your entries.
+hi
