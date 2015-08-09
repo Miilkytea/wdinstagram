@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 var port = process.env.PORT || 3000;
 var app = express();
+var routes = require('./routes/index');
 
 mongoose.connect('mongodb://localhost/wdinstagram');
 
@@ -24,6 +25,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', routes);
 
 // Source in the models
 var Entry = require('./models/Entry');
@@ -59,57 +62,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// Entry Routes
-// Index
-router.get('/entries', function(request, response, next){
-  Entry.find(function(error, entries){
-    if (error) response.send(error);
-    response.render('entries', {title: 'Entries', entries: entries})
-  });
-});
-
-// Render new view page
-router.get('/entries/new', function(request, response, next){
-  response.render('new', {title: 'New Entry'})
-});
-
-// Create new entry
-router.post('/entries', function(request, response, next){
-  var entry = new Entry();
-  entry.author = request.body.author;
-  entry.photo_url = request.body.photo_url;
-  entry.date_taken = request.body.date_taken;
-  entry.likes = request.body.likes;
-});
-
-// Show an entry
-router.get('/entries/:id', function(request, response, next){
-  Entry.findOne({_id: request.params.id}, function(error, entry){
-    if(error) response.send(error);
-    response.send('show', {title: entry.author, entry: entry})
-  });
-});
-
-// Edit an entry
-router.get('/entries/:id/edit', function(request, response, next){
-  Entry.findOne({_id: request.params.id}, function(error, entry){
-    response.render('edit', {title: 'Edit an entry', entry: entry})
-  });
-});
-
-// Update an entry
-router.put('/entries/:id', function(request, response, next){
-  Entry.update({_id: request.params.id}, {
-    author: request.body.author,
-    photo_url: request.body.photo_url,
-    date_taken: request.body.date_taken,
-    likes: request.body.likes
-  }, function(error){
-      if (error) return response.send(error);
-      response.redirect('/entries');
-  });
-});
-
 // Destroy an entry
 router.delete('/entries/:id', function(request, response, next){
   Entry.findByIdAndRemove(request.params.id, function(error){
@@ -122,4 +74,4 @@ module.exports = app;
 
 var server = http.createServer(app);
 server.listen(port);
-console.log("Magic may or not be happening on port 3000.");
+console.log("Magic may or may not be happening on port 3000.");

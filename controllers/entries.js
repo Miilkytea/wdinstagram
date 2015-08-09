@@ -30,18 +30,29 @@ module.exports.renderEntriesShow = function(req, res, next) {
     if(error) res.send(error);
     res.send('show', {title: entry.author, entry: entry});
   });
-  // res.render('entries/:id', { title: 'Entry' });
 };
 
 module.exports.renderEntriesEdit = function(req, res, next) {
-  res.render('entries/index', { title: 'WDInstagram' });
+  Entry.findOne({ _id: req.params.id }, function(error, entry){
+    res.render('entries/index', { title: 'Edit an Entry', entry: entry });
+  });
 };
 
 module.exports.renderEntriesUpdate = function(req, res, next) {
-  res.redirect('/entries');
+  Entry.update({_id: req.params.id}, {
+    author: req.body.author,
+    photo_url: req.body.photo_url,
+    date_taken: req.body.date_taken,
+    likes: req.body.likes
+  }, function(error){
+      if (error) return res.send(error);
+      res.redirect('/entries');
+  });
 };
 
 module.exports.renderEntriesDelete = function(req, res, next) {
-  res.render('entries/index', { title: 'WDInstagram' });
+  Entry.findAndRemoveById(request.params.id, function(error){
+    if (error) res.send(error);
+    response.redirect('/entries');
+  });
 };
-

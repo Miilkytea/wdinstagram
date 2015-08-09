@@ -22,3 +22,4 @@ router.put('/entries/:id', entriesController.renderEntriesUpdate);
 // Destroy an entry
 router.delete('/entries/:id', entriesController.renderEntriesDelete);
 
+module.exports = router;
