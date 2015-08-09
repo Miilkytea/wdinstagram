@@ -9,12 +9,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var router = express.Router();
 var port = process.env.PORT || 3000;
-
-// mongoose.connect('mongodb://localhost/wdinstagram');
-
-var routes = require('./routes/index');
-
 var app = express();
+
+mongoose.connect('mongodb://localhost/wdinstagram');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,7 +25,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+// Source in the models
+var Entry = require('./models/Entry');
+var entry = new Entry();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -38,7 +37,6 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -58,6 +56,65 @@ app.use(function(err, req, res, next) {
   res.render('error', {
     message: err.message,
     error: {}
+  });
+});
+
+// Entry Routes
+// Index
+router.get('/entries', function(request, response, next){
+  Entry.find(function(error, entries){
+    if (error) response.send(error);
+    response.render('entries', {title: 'Entries', entries: entries})
+  });
+});
+
+// Render new view page
+router.get('/entries/new', function(request, response, next){
+  response.render('new', {title: 'New Entry'})
+});
+
+// Create new entry
+router.post('/entries', function(request, response, next){
+  var entry = new Entry();
+  entry.author = request.body.author;
+  entry.photo_url = request.body.photo_url;
+  entry.date_taken = request.body.date_taken;
+  entry.likes = request.body.likes;
+});
+
+// Show an entry
+router.get('/entries/:id', function(request, response, next){
+  Entry.findOne({_id: request.params.id}, function(error, entry){
+    if(error) response.send(error);
+    response.send('show', {title: entry.author, entry: entry})
+  });
+});
+
+// Edit an entry
+router.get('/entries/:id/edit', function(request, response, next){
+  Entry.findOne({_id: request.params.id}, function(error, entry){
+    response.render('edit', {title: 'Edit an entry', entry: entry})
+  });
+});
+
+// Update an entry
+router.put('/entries/:id', function(request, response, next){
+  Entry.update({_id: request.params.id}, {
+    author: request.body.author,
+    photo_url: request.body.photo_url,
+    date_taken: request.body.date_taken,
+    likes: request.body.likes
+  }, function(error){
+      if (error) return response.send(error);
+      response.redirect('/entries');
+  });
+});
+
+// Destroy an entry
+router.delete('/entries/:id', function(request, response, next){
+  Entry.findByIdAndRemove(request.params.id, function(error){
+    if(error) response.send(error);
+    response.redirect('/entries');
   });
 });
 
