@@ -35,3 +35,21 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+.entry {
+  height: 640px;
+  width: 640px;
+  margin: 0 auto;
+}
+
+span.likes-text {
+  text-align: right;
+}
+
+
+i.fa .fa-heart {
+  text-align: left;
+} 
+
+
+
